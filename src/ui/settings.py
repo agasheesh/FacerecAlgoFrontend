@@ -40,13 +40,14 @@ class SettingsWidget(QtGui.QWidget, Ui_SettingsWidget):
 
     def addUser(self, user):
         user = user.strip()
-        if not user: return
+        if not user:
+            return
         if self.usersList.findItems(user, QtCore.Qt.MatchExactly):
             raise ValueError(self.tr("duplicated user"))
         self.usersList.addItem(user)
 
     def removeUser(self, user):
-        match = self.usersList.findItems(user, QtCore.Qt.MatchExactly)
+        match = self.usersList.findItems(user.strip(), QtCore.Qt.MatchExactly)
         if match:
             self.usersList.takeItem(self.usersList.row(match[0]))
 
@@ -67,7 +68,7 @@ class SettingsWidget(QtGui.QWidget, Ui_SettingsWidget):
 
     @selectedUser.setter
     def selectedUser(self, user):
-        match = self.usersList.findItems(user, QtCore.Qt.MatchExactly)
+        match = self.usersList.findItems(user.strip(), QtCore.Qt.MatchExactly)
         if match:
             match[0].setSelected(True)
 
@@ -81,13 +82,14 @@ class SettingsWidget(QtGui.QWidget, Ui_SettingsWidget):
 
     def addTechnique(self, technique):
         technique = technique.strip()
-        if not technique: return
+        if not technique:
+            return
         if self.techniqueCombo.findText(technique) > -1:
             raise ValueError(self.tr("duplicated technique"))
         self.techniqueCombo.addItem(technique)
 
     def removeTechnique(self, technique):
-        techniqueIndex = self.techniqueCombo.findText(technique)
+        techniqueIndex = self.techniqueCombo.findText(technique.strip())
         if techniqueIndex > -1:
             self.techniqueCombo.removeItem(techniqueIndex)
 
@@ -108,14 +110,18 @@ class SettingsWidget(QtGui.QWidget, Ui_SettingsWidget):
 
     @selectedTechnique.setter
     def selectedTechnique(self, technique):
-        techniqueIndex = self.techniqueCombo.findText(technique)
+        techniqueIndex = self.techniqueCombo.findText(technique.strip())
         if techniqueIndex > -1:
             self.techniqueCombo.setCurrentIndex(techniqueIndex)
 
 
-if __name__ == "__main__":
+def _main():
     import sys
     app = QtGui.QApplication(sys.argv)
     form = SettingsWidget()
     form.show()
     sys.exit(app.exec_())
+
+
+if __name__ == "__main__":
+    _main()
