@@ -10,27 +10,27 @@ import pyclbr
 __all__ = ["Plugin"]
 
 
-def _get_all_classes_names(clbr_analysis):
+def _getAllClassesNames(clbrAnalysis):
     ret = set()
-    for c in clbr_analysis:
+    for c in clbrAnalysis:
         if isinstance(c, pyclbr.Class):
             ret.add(c.name)
-            ret.union(_get_all_classes_names(c.super))
+            ret.union(_getAllClassesNames(c.super))
     return ret
 
-def _is_a_plugin_module(mod_name, path):
+def _isAPluginModule(modName, path):
     # ==========================================================================
     # CAUTION: UNSAFE AND UGLY CODE
     # unfortunately this is needed to overpass the pyclbr cache and allow
     # checking of changed modules =/
     reload(pyclbr)
     # ==========================================================================
-    superclasses_in_mod = reduce(set.union, (_get_all_classes_names(c.super) \
-        for c in pyclbr.readmodule(mod_name, path).values()))
+    superclassesInMod = reduce(set.union, (_getAllClassesNames(c.super) \
+        for c in pyclbr.readmodule(modName, path).values()))
     # I know... this is not a very comprehensive and secure test because the
     # class name is not a unique identifier... but for the scope of this
     # application, it's completely OK
-    return Plugin.__name__ in superclasses_in_mod
+    return Plugin.__name__ in superclassesInMod
 
 
 class _PluginMeta(abc.ABCMeta):
@@ -52,7 +52,7 @@ class Plugin(object):
         paths = list(paths)
         cls._registered = []
         for _, name, _ in pkgutil.iter_modules(paths):
-            if _is_a_plugin_module(name, paths):
+            if _isAPluginModule(name, paths):
                 fid, pathname, desc = imp.find_module(name, paths)
                 try:
                     imp.load_module(name, fid, pathname, desc)
@@ -63,7 +63,7 @@ class Plugin(object):
                     fid.close()
 
     @classmethod
-    def get_instances(cls):
+    def getInstances(cls):
         ret = []
         for p in cls._registered:
             try:
