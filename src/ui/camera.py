@@ -6,6 +6,11 @@ from PyQt4 import QtCore
 from PyQt4 import QtGui
 
 
+__all__ = ['OpenCVQImage',
+           'CameraDevice',
+           'CameraWidget']
+
+
 class OpenCVQImage(QtGui.QImage):
 
     def __init__(self, opencvBgrImg):
