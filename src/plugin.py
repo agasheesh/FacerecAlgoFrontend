@@ -7,7 +7,7 @@ import pkgutil
 import pyclbr
 
 
-__all__ = ['Plugin']
+__all__ = ["Plugin"]
 
 
 def _get_all_classes_names(clbr_analysis):
@@ -20,7 +20,7 @@ def _get_all_classes_names(clbr_analysis):
 
 def _is_a_plugin_module(mod_name, path):
     # ==========================================================================
-    # CAUTION: UNSAFE AND UGLY CODE    
+    # CAUTION: UNSAFE AND UGLY CODE
     # unfortunately this is needed to overpass the pyclbr cache and allow
     # checking of changed modules =/
     reload(pyclbr)
@@ -37,7 +37,7 @@ class _PluginMeta(abc.ABCMeta):
 
     def __init__(self, name, bases, attrs):
         super(_PluginMeta, self).__init__(name, bases, attrs)
-        if not hasattr(self, '_registered'):
+        if not hasattr(self, "_registered"):
             self._registered = []
         else:
             self._registered.append(self)
