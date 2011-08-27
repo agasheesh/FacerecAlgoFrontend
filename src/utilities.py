@@ -3,6 +3,9 @@
 import time
 
 
+__all__ = ['StopWatch']
+
+
 class StopWatch(object):
 
     def __init__(self):
@@ -12,5 +15,5 @@ class StopWatch(object):
         self._time = time.time()
 
     @property
-    def elapsed_time(self):
+    def elapsedTime(self):
         return (time.time() - self._time) * 1000
