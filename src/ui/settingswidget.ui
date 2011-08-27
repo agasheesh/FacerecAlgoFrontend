@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SettingsWidget</class>
+ <widget class="QWidget" name="SettingsWidget">
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="margin">
+    <number>0</number>
+   </property>
+   <item>
+    <widget class="QLabel" name="usersLabel">
+     <property name="text">
+      <string>&lt;h2&gt;&amp;Users:&lt;/h2&gt;</string>
+     </property>
+     <property name="buddy">
+      <cstring>usersList</cstring>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="Line" name="verticalLineSep">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QListWidget" name="usersList"/>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="userButtonsLayout">
+     <item>
+      <widget class="QPushButton" name="newUserButton">
+       <property name="text">
+        <string>&amp;New User</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="removeUserButton">
+       <property name="text">
+        <string>&amp;Remove User</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="Line" name="usersLineSep">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="securityTolLabel">
+     <property name="text">
+      <string>&amp;Security tolerance</string>
+     </property>
+     <property name="buddy">
+      <cstring>securityTolSlider</cstring>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QSlider" name="securityTolSlider">
+     <property name="maximum">
+      <number>100</number>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="Line" name="techniqueLineSep">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="techniqueLabel">
+     <property name="text">
+      <string>&amp;Technique:</string>
+     </property>
+     <property name="buddy">
+      <cstring>techniqueCombo</cstring>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QComboBox" name="techniqueCombo"/>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
