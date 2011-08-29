@@ -6,9 +6,9 @@ from PyQt4 import QtCore
 from PyQt4 import QtGui
 
 
-__all__ = ['OpenCVQImage',
-           'CameraDevice',
-           'CameraWidget']
+__all__ = ["OpenCVQImage",
+           "CameraDevice",
+           "CameraWidget"]
 
 
 class OpenCVQImage(QtGui.QImage):
@@ -126,6 +126,7 @@ def _main():
 
     @QtCore.pyqtSlot(cv.iplimage)
     def onNewFrame(frame):
+        cv.CvtColor(frame, frame, cv.CV_RGB2BGR)
         msg = "processed frame"
         font = cv.InitFont(cv.CV_FONT_HERSHEY_DUPLEX, 1.0, 1.0)
         tsize, baseline = cv.GetTextSize(msg, font)
@@ -139,9 +140,12 @@ def _main():
 
     cameraDevice = CameraDevice(mirrored=True)
 
-    cameraWidget = CameraWidget(cameraDevice)
-    cameraWidget.newFrame.connect(onNewFrame)
-    cameraWidget.show()
+    cameraWidget1 = CameraWidget(cameraDevice)
+    cameraWidget1.newFrame.connect(onNewFrame)
+    cameraWidget1.show()
+
+    cameraWidget2 = CameraWidget(cameraDevice)
+    cameraWidget2.show()
 
     sys.exit(app.exec_())
 

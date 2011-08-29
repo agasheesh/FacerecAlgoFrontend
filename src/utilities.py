@@ -3,7 +3,7 @@
 import time
 
 
-__all__ = ['StopWatch']
+__all__ = ["StopWatch"]
 
 
 class StopWatch(object):

@@ -6,7 +6,7 @@ from PyQt4 import QtGui
 from ui_settingswidget import Ui_SettingsWidget
 
 
-__all__ = ['SettingsWidget']
+__all__ = ["SettingsWidget"]
 
 
 class SettingsWidget(QtGui.QWidget, Ui_SettingsWidget):
