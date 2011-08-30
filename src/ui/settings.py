@@ -46,7 +46,7 @@ class SettingsWidget(QtGui.QWidget, Ui_SettingsWidget):
         if not user:
             return
         if self.usersList.findItems(user, QtCore.Qt.MatchExactly):
-            raise ValueError(self.tr("duplicated user"))
+            raise ValueError(self.tr("Duplicated user."))
         self.usersList.addItem(user)
 
     def removeUser(self, user):
@@ -88,7 +88,7 @@ class SettingsWidget(QtGui.QWidget, Ui_SettingsWidget):
         if not technique:
             return
         if self.techniqueCombo.findText(technique) > -1:
-            raise ValueError(self.tr("duplicated technique"))
+            raise ValueError(self.tr("Duplicated technique."))
         self.techniqueCombo.addItem(technique)
 
     def removeTechnique(self, technique):

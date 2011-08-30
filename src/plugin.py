@@ -57,7 +57,7 @@ class Plugin(object):
                 try:
                     imp.load_module(name, fid, pathname, desc)
                 except Exception as e:
-                    logging.warning("couldn't fully load plugin mod. '%s': %s",
+                    logging.warning("Couldn't fully load plugin mod. '%s': %s.",
                                     pathname, e.message)
                 if fid:
                     fid.close()
@@ -69,7 +69,7 @@ class Plugin(object):
             try:
                 ret.append(p())
             except TypeError as e:
-                logging.warning("couldn't instantiate plugin class '%s': %s",
+                logging.warning("Ccouldn't instantiate plugin class '%s': %s.",
                                 p.__name__, e.message)
         return ret
 
