@@ -13,17 +13,19 @@ __all__ = ["OpenCVQImage",
 
 class OpenCVQImage(QtGui.QImage):
 
-    def __init__(self, opencvBgrImg):
-        depth, nChannels = opencvBgrImg.depth, opencvBgrImg.nChannels
-        if depth != cv.IPL_DEPTH_8U or nChannels != 3:
-            raise ValueError("the input image must be 8-bit, 3-channel")
-        w, h = cv.GetSize(opencvBgrImg)
-        opencvRgbImg = cv.CreateImage((w, h), depth, nChannels)
+    def __init__(self, bgrImg):
+        depth, nChannels = bgrImg.depth, bgrImg.nChannels
+
+        assert depth == cv.IPL_DEPTH_8U, "The input must be an 8-bit image."
+        assert nChannels == 3, "The input must be a 3-channel image."
+
+        w, h = cv.GetSize(bgrImg)
+        rgbImg = cv.CreateImage((w, h), depth, nChannels)
         # it's assumed the image is in BGR format
-        cv.CvtColor(opencvBgrImg, opencvRgbImg, cv.CV_BGR2RGB)
-        self._imgData = opencvRgbImg.tostring()
-        super(OpenCVQImage, self).__init__(self._imgData, w, h, \
-            QtGui.QImage.Format_RGB888)
+        cv.CvtColor(bgrImg, rgbImg, cv.CV_BGR2RGB)
+        self._imgData = rgbImg.tostring()
+        super(OpenCVQImage, self).__init__(self._imgData, w, h,
+                                           QtGui.QImage.Format_RGB888)
 
 
 class CameraDevice(QtCore.QObject):
@@ -48,9 +50,11 @@ class CameraDevice(QtCore.QObject):
     @QtCore.pyqtSlot()
     def _queryFrame(self):
         frame = cv.QueryFrame(self._cameraDevice)
+        if not frame:
+            return
         if self.mirrored:
-            mirroredFrame = cv.CreateImage(cv.GetSize(frame), frame.depth, \
-                frame.nChannels)
+            mirroredFrame = cv.CreateImage(cv.GetSize(frame), frame.depth,
+                                           frame.nChannels)
             cv.Flip(frame, mirroredFrame, 1)
             frame = mirroredFrame
         self.newFrame.emit(frame)
@@ -85,8 +89,8 @@ class CameraDevice(QtCore.QObject):
     def frameSize(self, newSize):
         w, h = newSize
         cv.SetCaptureProperty(self._cameraDevice, cv.CV_CAP_PROP_FRAME_WIDTH, w)
-        cv.SetCaptureProperty(self._cameraDevice, cv.CV_CAP_PROP_FRAME_HEIGHT, \
-            h)
+        cv.SetCaptureProperty(self._cameraDevice, cv.CV_CAP_PROP_FRAME_HEIGHT,
+                              h)
 
 
 class CameraWidget(QtGui.QWidget):
