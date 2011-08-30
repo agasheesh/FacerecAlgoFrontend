@@ -69,7 +69,7 @@ class Plugin(object):
             try:
                 ret.append(p())
             except TypeError as e:
-                logging.warning("Ccouldn't instantiate plugin class '%s': %s.",
+                logging.warning("Couldn't instantiate plugin class '%s': %s.",
                                 p.__name__, e.message)
         return ret
 
