@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import cv
+import cv2
+import numpy as np
 
 from PyQt4 import QtCore
 from PyQt4 import QtGui
@@ -14,16 +16,15 @@ __all__ = ["OpenCVQImage",
 class OpenCVQImage(QtGui.QImage):
 
     def __init__(self, bgrImg):
-        depth, nChannels = bgrImg.depth, bgrImg.nChannels
 
-        assert depth == cv.IPL_DEPTH_8U, "The input must be an 8-bit image."
-        assert nChannels == 3, "The input must be a 3-channel image."
+        assert bgrImg.ndim == 3 and bgrImg.shape[2] == 3, \
+            "The input must be a 3-channel image."
+        assert bgrImg.dtype == np.uint8, "The input must be an 8-bit image."
 
-        w, h = cv.GetSize(bgrImg)
-        rgbImg = cv.CreateImage((w, h), depth, nChannels)
         # it's assumed the image is in BGR format
-        cv.CvtColor(bgrImg, rgbImg, cv.CV_BGR2RGB)
+        rgbImg = cv2.cvtColor(bgrImg, cv2.COLOR_BGR2RGB)
         self._imgData = rgbImg.tostring()
+        h, w = rgbImg.shape[0:2]
         super(OpenCVQImage, self).__init__(self._imgData, w, h,
                                            QtGui.QImage.Format_RGB888)
 
@@ -32,14 +33,16 @@ class CameraDevice(QtCore.QObject):
 
     _DEFAULT_FPS = 30
 
-    newFrame = QtCore.pyqtSignal(cv.iplimage)
+    newFrame = QtCore.pyqtSignal(np.ndarray)
 
     def __init__(self, cameraId=0, mirrored=False, parent=None):
         super(CameraDevice, self).__init__(parent)
 
         self.mirrored = mirrored
 
-        self._cameraDevice = cv.CaptureFromCAM(cameraId)
+        self._cameraDevice = cv2.VideoCapture(cameraId)
+        if not self._cameraDevice.isOpened():
+            raise IOError("Could not open camera '%d'.", cameraId)
 
         self._timer = QtCore.QTimer(self)
         self._timer.timeout.connect(self._queryFrame)
@@ -49,14 +52,11 @@ class CameraDevice(QtCore.QObject):
 
     @QtCore.pyqtSlot()
     def _queryFrame(self):
-        frame = cv.QueryFrame(self._cameraDevice)
-        if not frame:
+        _, frame = self._cameraDevice.read()
+        if frame is None:
             return
         if self.mirrored:
-            mirroredFrame = cv.CreateImage(cv.GetSize(frame), frame.depth,
-                                           frame.nChannels)
-            cv.Flip(frame, mirroredFrame, 1)
-            frame = mirroredFrame
+            frame = cv2.flip(frame, 1)
         self.newFrame.emit(frame)
 
     @property
@@ -72,30 +72,27 @@ class CameraDevice(QtCore.QObject):
 
     @property
     def fps(self):
-        fps = int(cv.GetCaptureProperty(self._cameraDevice, cv.CV_CAP_PROP_FPS))
+        fps = int(self._cameraDevice.get(cv.CV_CAP_PROP_FPS))
         if not fps > 0:
             fps = self._DEFAULT_FPS
         return fps
 
     @property
     def frameSize(self):
-        w = cv.GetCaptureProperty(self._cameraDevice, \
-            cv.CV_CAP_PROP_FRAME_WIDTH)
-        h = cv.GetCaptureProperty(self._cameraDevice, \
-            cv.CV_CAP_PROP_FRAME_HEIGHT)
-        return (int(w), int(h))
+        w = self._cameraDevice.get(cv.CV_CAP_PROP_FRAME_WIDTH)
+        h = self._cameraDevice.get(cv.CV_CAP_PROP_FRAME_HEIGHT)
+        return int(w), int(h)
 
     @frameSize.setter
     def frameSize(self, newSize):
         w, h = newSize
-        cv.SetCaptureProperty(self._cameraDevice, cv.CV_CAP_PROP_FRAME_WIDTH, w)
-        cv.SetCaptureProperty(self._cameraDevice, cv.CV_CAP_PROP_FRAME_HEIGHT,
-                              h)
+        self._cameraDevice.set(cv.CV_CAP_PROP_FRAME_WIDTH, w)
+        self._cameraDevice.set(cv.CV_CAP_PROP_FRAME_HEIGHT, h)
 
 
 class CameraWidget(QtGui.QWidget):
 
-    newFrame = QtCore.pyqtSignal(cv.iplimage)
+    newFrame = QtCore.pyqtSignal(np.ndarray)
 
     def __init__(self, cameraDevice, parent=None):
         super(CameraWidget, self).__init__(parent)
@@ -111,7 +108,7 @@ class CameraWidget(QtGui.QWidget):
 
     @QtCore.pyqtSlot(cv.iplimage)
     def _onNewFrame(self, frame):
-        self._frame = cv.CloneImage(frame)
+        self._frame = frame.copy()
         self.newFrame.emit(self._frame)
         self.update()
 
@@ -130,13 +127,12 @@ def _main():
 
     @QtCore.pyqtSlot(cv.iplimage)
     def onNewFrame(frame):
-        cv.CvtColor(frame, frame, cv.CV_RGB2BGR)
+        cv2.cvtColor(frame, cv2.COLOR_RGB2BGR, frame)
         msg = "processed frame"
-        font = cv.InitFont(cv.CV_FONT_HERSHEY_DUPLEX, 1.0, 1.0)
-        tsize, baseline = cv.GetTextSize(msg, font)
-        w, h = cv.GetSize(frame)
+        h, w = frame.shape[0:2]
+        tsize, baseline = cv2.getTextSize(msg, cv2.FONT_HERSHEY_PLAIN, 2, 2)
         tpt = (w - tsize[0]) / 2, (h - tsize[1]) / 2
-        cv.PutText(frame, msg, tpt, font, cv.RGB(255, 0, 0))
+        cv2.putText(frame, msg, tpt, cv2.FONT_HERSHEY_PLAIN, 2, (255, 0, 0), 2)
 
     import sys
 
