@@ -103,7 +103,6 @@ class CameraWidget(QtGui.QWidget):
 
         w, h = self._cameraDevice.frameSize
         self.setMinimumSize(w, h)
-        self.setMaximumSize(w, h)
 
     @QtCore.pyqtSlot(cv.iplimage)
     def _onNewFrame(self, frame):
@@ -113,13 +112,18 @@ class CameraWidget(QtGui.QWidget):
 
     def changeEvent(self, e):
         if e.type() == QtCore.QEvent.EnabledChange:
-            self._cameraDevice.paused = not self.isEnabled()
+            if self.isEnabled():
+                self._cameraDevice.newFrame.connect(self._onNewFrame)
+            else:
+                self._cameraDevice.newFrame.disconnect(self._onNewFrame)
 
     def paintEvent(self, e):
         if self._frame is None:
             return
         painter = QtGui.QPainter(self)
-        painter.drawImage(QtCore.QPoint(0, 0), OpenCVQImage(self._frame))
+        h, w = self._frame.shape[0:2]
+        pt = QtCore.QPoint((self.width() - w) / 2, (self.height() - h) / 2)
+        painter.drawImage(pt, OpenCVQImage(self._frame))
 
 
 def _main():
