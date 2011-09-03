@@ -84,11 +84,11 @@ class Plugin(object):
     @abc.abstractmethod
     def teardown(self):
         pass
-    
+
     @abc.abstractmethod
     def train(self, users):
         pass
-    
+
     @abc.abstractmethod
     def identify(self, frame, bbox, securityTol):
         pass

@@ -18,11 +18,19 @@ class FaceRecognizer(object):
 
     def loadPluginsFrom(self, newPath):
         self.selectTechniqueByName(None)
+        self._techniques = {}
         if newPath:
             Plugin.load(newPath)
-            self._techniques = dict((p.name, p) for p in Plugin.getInstances())
-        else:
-            self._techniques = {}
+            for p in Plugin.getInstances():
+                origName = p.name.strip()
+                if not origName:
+                    continue
+                name = origName
+                i = 1
+                while self._techniques.has_key(name):
+                    name = "%s %d" % (origName, i)
+                    i += 1
+                self._techniques[name] = p
 
     @property
     def techniquesNames(self):

@@ -15,7 +15,7 @@ __all__ = ["StopWatch",
 
 def getApplicationPath():
     appPath = os.path.join(os.path.expanduser("~"), ".VIISAR",
-                           "Face Recognition Platform")
+                           "Face Recognition")
     try:
         if not os.path.exists(appPath):
             os.makedirs(appPath)
@@ -53,7 +53,7 @@ class Enrollment(object):
             path = os.path.join(self._path,
                                 "%d.%s" % (i, Enroller._SAMPLES_FORMAT))
             frame = cv2.imread(path, cv2.CV_LOAD_IMAGE_GRAYSCALE)
-            if not frame is None:
+            if frame is not None:
                 ret.append(f(frame, bbox))
         return ret
 
@@ -109,9 +109,9 @@ class Enroller(object):
             self._stopWatch.start()
 
 
-def objectDetector(detectorFilename, minObjRelDim=0.2, maxObjRelDim=1,
-                   classifierPyrScaleFactor=1.1, minNeighbors=3,
-                   subsamplingScaleFactor=0.4):
+def objectDetector(detectorFilename, minObjRelDim=0.3, maxObjRelDim=1,
+                   classifierPyrScaleFactor=1.15, minNeighbors=3,
+                   subsamplingScaleFactor=0.35):
 
     assert minObjRelDim < maxObjRelDim, \
         "'minObjRelDim' must be < 'maxObjRelDim'."
