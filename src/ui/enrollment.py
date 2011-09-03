@@ -8,9 +8,12 @@ from PyQt4 import QtGui
 
 from ui.camera import CameraDevice
 from ui.camera import CameraWidget
-from facerec import Enroller
-from facerec import Enrollment
+from enrollment import Enroller
+from enrollment import Enrollment
 from utilities import objectDetector
+
+
+__all__ = ["EnrollmentWidget"]
 
 
 class EnrollmentWidget(QtGui.QWidget):
