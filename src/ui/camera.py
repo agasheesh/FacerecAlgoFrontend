@@ -15,14 +15,12 @@ __all__ = ["OpenCVQImage",
 
 class OpenCVQImage(QtGui.QImage):
 
-    def __init__(self, bgrImg):
+    def __init__(self, rgbImg):
 
-        assert bgrImg.ndim == 3 and bgrImg.shape[2] == 3, \
+        assert rgbImg.ndim == 3 and rgbImg.shape[2] == 3, \
             "The input must be a 3-channel image."
-        assert bgrImg.dtype == np.uint8, "The input must be an 8-bit image."
+        assert rgbImg.dtype == np.uint8, "The input must be an 8-bit image."
 
-        # it's assumed the image is in BGR format
-        rgbImg = cv2.cvtColor(bgrImg, cv2.COLOR_BGR2RGB)
         self._imgData = rgbImg.tostring()
         h, w = rgbImg.shape[0:2]
         super(OpenCVQImage, self).__init__(self._imgData, w, h,
@@ -57,7 +55,8 @@ class CameraDevice(QtCore.QObject):
             return
         if self.mirrored:
             frame = cv2.flip(frame, 1)
-        self.newFrame.emit(frame)
+        # it's assumed the frame is in BGR format
+        self.newFrame.emit(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
 
     @property
     def paused(self):
