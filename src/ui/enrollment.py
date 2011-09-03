@@ -8,8 +8,8 @@ from PyQt4 import QtGui
 
 from ui.camera import CameraDevice
 from ui.camera import CameraWidget
-from enrollment import Enroller
-from enrollment import Enrollment
+from utilities import Enroller
+from utilities import Enrollment
 from utilities import objectDetector
 
 
@@ -47,8 +47,6 @@ class EnrollmentWidget(QtGui.QWidget):
         self._buttonsLayout.addWidget(self._cancelEnrollmentButton)
 
         self._verticalLayout.addLayout(self._buttonsLayout)
-
-        self.setMaximumSize(self.minimumSizeHint())
 
         self._faceDetector = faceDetector
 
