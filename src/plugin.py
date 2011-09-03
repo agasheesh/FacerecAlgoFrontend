@@ -73,6 +73,10 @@ class Plugin(object):
                                 p.__name__, e.message)
         return ret
 
+    @abc.abstractproperty
+    def name(self):
+        pass
+
     @abc.abstractmethod
     def setup(self):
         pass
